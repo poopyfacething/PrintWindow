@@ -17,9 +17,10 @@ app.listen(PORT, async () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 
     try {
-        // Launch Puppeteer (headless Chrome)
+        // Launch Puppeteer with the correct executable path
         const browser = await puppeteer.launch({
             headless: true,
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome',
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
