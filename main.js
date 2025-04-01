@@ -19,10 +19,11 @@ app.listen(PORT, async () => {
     try {
         // Launch Puppeteer with Render-compatible settings
         const browser = await puppeteer.launch({
-            headless: 'new',
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--single-process']
-        });
-
+    headless: 'new',
+    executablePath: process.env.CHROME_BIN || '/usr/bin/google-chrome', // Use system Chrome
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--single-process']
+});
+        
         const pages = await browser.pages();
         console.log('Open tabs:', pages.length);
         
