@@ -1,9 +1,9 @@
 const express = require('express');
 const path = require('path');
-const CDP = require('chrome-remote-interface');
+const puppeteer = require('puppeteer');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -17,16 +17,24 @@ app.listen(PORT, async () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 
     try {
-        const client = await CDP({ host: 'localhost', port: 9222 });
-        const { Network, Page } = client;
-        
-        await Promise.all([Network.enable(), Page.enable()]);
-        
-        const tabs = await CDP.List();
-        console.log('Open tabs:', tabs);
+        // Launch Puppeteer (headless Chrome)
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
 
-        await client.close();
+        const pages = await browser.pages();
+        console.log('Open tabs:', pages.length);
+        
+        // Log all open tabs
+        const tabs = await Promise.all(pages.map(async (page) => {
+            return await page.title();
+        }));
+
+        console.log('Tab titles:', tabs);
+
+        await browser.close();
     } catch (error) {
-        console.error('Error connecting to Chrome DevTools:', error);
+        console.error('Error launching Chrome:', error);
     }
 });
