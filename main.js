@@ -17,11 +17,10 @@ app.listen(PORT, async () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 
     try {
-        // Launch Puppeteer with the correct executable path
+        // Launch Puppeteer with Render-compatible settings
         const browser = await puppeteer.launch({
-            headless: true,
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome',
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            headless: 'new',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--single-process']
         });
 
         const pages = await browser.pages();
